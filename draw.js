@@ -83,7 +83,7 @@ function draw() {
   // var vel = getVelocity(closest);
   // console.log(vel);
 
-  Body.setVelocity(ball, { x: 7*xDis, y: 7*yDis });
+  Body.setVelocity(ball, { x: 3*xDis, y: 3*yDis });
 
 
   for (var i=0; i < allBalls.length; i++) {
@@ -111,26 +111,26 @@ function draw() {
 
 
 // Not sure why this isn't working...:
-function getVelocity(pt) {
-  console.log(pt);
-  var xDis, yDis;
-  var vel;
-  // get the Perlin value of the closest grid point to determine velocity:
-  fullArray.forEach(function(c) {
-    if (c.x == pt.x && c.y == pt.y) {
-      // console.log(c);
-      var angle = c.val * 2 * Math.PI;
-      // console.log(angle);
-      xDis = Math.cos(angle);
-      yDis = Math.sin(angle);
-      console.log(xDis, yDis);
-      vel = {x: xDis, y: yDis};
-      console.log(vel);
-
-    }
-  });
-  return vel;
-}
+// function getVelocity(pt) {
+//   console.log(pt);
+//   var xDis, yDis;
+//   var vel;
+//   // get the Perlin value of the closest grid point to determine velocity:
+//   fullArray.forEach(function(c) {
+//     if (c.x == pt.x && c.y == pt.y) {
+//       // console.log(c);
+//       var angle = c.val * 2 * Math.PI;
+//       // console.log(angle);
+//       xDis = Math.cos(angle);
+//       yDis = Math.sin(angle);
+//       console.log(xDis, yDis);
+//       vel = {x: xDis, y: yDis};
+//       console.log(vel);
+//
+//     }
+//   });
+//   return vel;
+// }
 
 
 // Helper functions:
@@ -179,6 +179,7 @@ function mouseClicked() {
 }
 
 // In our case, w=600, s=20, and w/s = 30 = number of cells per row:
+// HMM, why do the vectors always point LEFT?
 function drawVectors() {
   gridPoints.forEach(function(pt, index) {
     translate(pt.x, pt.y);
