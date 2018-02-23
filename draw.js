@@ -14,8 +14,8 @@ var allBalls = [];
 
 var world;
 
-// var xOff = -0.02;
-// var yOff = 0.05;
+var xOff = -0.02;
+var yOff = 0.05;
 // var xOffPrev = xOff;
 // var yOffPrev = yOff;
 
@@ -42,7 +42,7 @@ function draw() {
   background(100);
   drawVectors();
 
-  // noLoop();
+  noLoop();
 
   ellipse(ball.position.x, ball.position.y, 10);
   // remember, we're just hard coding the fidelity to the vector field here -- should bind them with a global rule:
@@ -67,30 +67,40 @@ function mouseDragged() {
 function drawVectors() {
   gridPoints.forEach(function(pt, index) {
     translate(pt.x, pt.y);
+    // --Basic field:--
     // var xDis = 20 * ((w/2) - pt.x) / w;
     // var yDis = 20 * ((w/2) - pt.y) / w;
 
+    // --Failed attempt:--
     // to keep continuity going downward as well as across:
-    if (index % (w/s) == 0) {
-      // xOffPrev = xOff;
-      // yOffPrev = yOff;
-      xOff = xOffPrev;
-      yOff = yOffPrev;
-    }
+    // if (index % (w/s) == 0) {
+    //   xOff = xOffPrev;
+    //   yOff = yOffPrev;
+    // }
+    // xOff += 0.15;
+    // yOff += 0.15;
+    // var nx = noise(xOff);
+    // var ny = noise(yOff);
+    // var xDis = 30 * nx;
+    // var yDis = 30 * ny;
+    //
+    // xOffPrev = nx;
+    // yOffPrev = ny;
 
+    var noiseVal = noise(xOff + pt.x/s, yOff + pt.y/s);
+    // console.log(noiseVal);
 
-    xOff += 0.15;
-    yOff += 0.15;
-    var nx = noise(xOff);
-    var ny = noise(yOff);
-    var xDis = 30 * nx;
-    var yDis = 30 * ny;
+    var angle = noiseVal * 2 * Math.PI;
 
-    xOffPrev = nx;
-    yOffPrev = ny;
+    rotate(angle);
+
 
     stroke(255);
-    line(0, 0, xDis, yDis);
+    line(0, 0, 5, 0);
+
+    rotate(-angle);
+
+    // line(0, 0, xDis, yDis);
     // don't forget to translate back out -- could likely also use push and pop to achieve same effect:
     translate(-pt.x, -pt.y);
   });
