@@ -18,10 +18,13 @@ function setup () {
 
 function addVectors() {
   gridPoints.forEach(function(pt) {
-    var xDis = (w/2 - pt.x) / 450;
-    var yDis = (w/2 - pt.y) / 450;
+    translate(pt.x, pt.y);
+    var xDis = 10 * Math.pow((w/2) - pt.x, 1) / w ;
+    var yDis = 10 * Math.pow((w/2) - pt.y, 1) / w;
     stroke(255);
-    line(pt.x, pt.y, xDis, yDis);
+    // console.log(pt);
+    line(0, 0, xDis, yDis);
+    translate(-pt.x, -pt.y);
   });
 }
 
