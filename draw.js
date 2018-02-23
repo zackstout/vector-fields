@@ -6,7 +6,9 @@ var w;
 var Engine = Matter.Engine;
 var World = Matter.World;
 var Bodies = Matter.Bodies;
-var ball = Bodies.circle(320, 350, 10, {isStatic: false});
+var Body = Matter.Body;
+
+var ball = Bodies.circle(320, 350, 5, {isStatic: false});
 
 
 function setup () {
@@ -15,7 +17,7 @@ function setup () {
 
   var engine = Engine.create();
   var world = engine.world;
-
+  world.gravity.y = 0;
 
   World.add(world, ball);
   Engine.run(engine);
@@ -23,21 +25,22 @@ function setup () {
   w = width;
   // s = 20;
   makeGrid();
-  addVectors();
+  drawVectors();
 
   console.log(gridPoints);
 }
 
 
 function draw() {
-  ellipse(ball.position.x, ball.position.y, 20);
+  ellipse(ball.position.x, ball.position.y, 10);
+  Body.setVelocity(ball, { x: (w/2 - ball.position.x) / w, y: (w/2 - ball.position.y) / w});
 }
 
 
-function addVectors() {
+function drawVectors() {
   gridPoints.forEach(function(pt) {
     translate(pt.x, pt.y);
-    var xDis = 20 * Math.pow((w/2) - pt.x, 1) / w ;
+    var xDis = 20 * Math.pow((w/2) - pt.x, 1) / w;
     var yDis = 20 * Math.pow((w/2) - pt.y, 1) / w;
     stroke(255);
     // console.log(pt);
