@@ -14,6 +14,11 @@ var allBalls = [];
 
 var world;
 
+// var xOff = -0.02;
+// var yOff = 0.05;
+// var xOffPrev = xOff;
+// var yOffPrev = yOff;
+
 // Setup:
 function setup () {
   createCanvas(600, 600);
@@ -37,6 +42,8 @@ function draw() {
   background(100);
   drawVectors();
 
+  // noLoop();
+
   ellipse(ball.position.x, ball.position.y, 10);
   // remember, we're just hard coding the fidelity to the vector field here -- should bind them with a global rule:
   Body.setVelocity(ball, { x: (w/2 - ball.position.x) / w, y: (w/2 - ball.position.y) / w});
@@ -56,11 +63,32 @@ function mouseDragged() {
   allBalls.push(ball);
 }
 
+// In our case, w=600, s=20, and w/s = 30 = number of cells per row:
 function drawVectors() {
-  gridPoints.forEach(function(pt) {
+  gridPoints.forEach(function(pt, index) {
     translate(pt.x, pt.y);
-    var xDis = 20 * Math.pow((w/2) - pt.x, 1) / w;
-    var yDis = 20 * Math.pow((w/2) - pt.y, 1) / w;
+    // var xDis = 20 * ((w/2) - pt.x) / w;
+    // var yDis = 20 * ((w/2) - pt.y) / w;
+
+    // to keep continuity going downward as well as across:
+    if (index % (w/s) == 0) {
+      // xOffPrev = xOff;
+      // yOffPrev = yOff;
+      xOff = xOffPrev;
+      yOff = yOffPrev;
+    }
+
+
+    xOff += 0.15;
+    yOff += 0.15;
+    var nx = noise(xOff);
+    var ny = noise(yOff);
+    var xDis = 30 * nx;
+    var yDis = 30 * ny;
+
+    xOffPrev = nx;
+    yOffPrev = ny;
+
     stroke(255);
     line(0, 0, xDis, yDis);
     // don't forget to translate back out -- could likely also use push and pop to achieve same effect:
