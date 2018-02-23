@@ -41,7 +41,7 @@ function setup () {
 function draw() {
   background(100);
   drawVectors();
-  // console.log(fullArray);
+  // console.log(frameRate());
 
   // noLoop();
 
@@ -65,6 +65,7 @@ function draw() {
       // console.log(angle);
       xDis = Math.cos(angle);
       yDis = Math.sin(angle);
+      return;
       // console.log(xDis, yDis);
     }
   });
@@ -74,10 +75,27 @@ function draw() {
 
   Body.setVelocity(ball, { x: 7*xDis, y: 7*yDis });
 
+
   for (var i=0; i < allBalls.length; i++) {
     var newBall = allBalls[i];
     ellipse(newBall.position.x, newBall.position.y, 10);
-    Body.setVelocity(newBall, { x: (w/2 - newBall.position.x) / w, y: (w/2 - newBall.position.y) / w});
+    var xDis2, yDis2;
+    // get the Perlin value of the closest grid point to determine velocity:
+
+    var closest2 = findClosest(newBall.position.x, newBall.position.y);
+    fullArray.forEach(function(c) {
+      if (c.x == closest2.x && c.y == closest2.y) {
+        // console.log(c);
+        var angle = c.val * 2 * Math.PI;
+        // console.log(angle);
+        xDis2 = Math.cos(angle);
+        yDis2 = Math.sin(angle);
+        return;
+        // console.log(xDis, yDis);
+      }
+    });
+
+    Body.setVelocity(newBall, { x: 7 * xDis2, y: 7 * yDis2 });
   }
 }
 
