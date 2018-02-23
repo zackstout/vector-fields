@@ -10,7 +10,7 @@ var World = Matter.World;
 var Bodies = Matter.Bodies;
 var Body = Matter.Body;
 
-var ball = Bodies.circle(325, 350, 5, {isStatic: false});
+var ball = Bodies.circle(525, 450, 5, {isStatic: false});
 var allBalls = [];
 
 var world;
@@ -36,6 +36,7 @@ function setup () {
   console.log(gridPoints);
 }
 
+
 // Draw:
 function draw() {
   background(100);
@@ -51,10 +52,68 @@ function draw() {
 
   // Say ball is at (25, 35): need to check (20, 20), (20, 40), (40, 20), and (40, 40).
   // Lot of work to get the closest grid-point...but whatev:
-  var closest;
+  var closest = findClosest(ball.position.x, ball.position.y);
 
-  var altPosX = ball.position.x / s;
-  var altPosY = ball.position.y / s;
+  // console.log(closest);
+
+  var xDis, yDis;
+  // get the Perlin value of the closest grid point to determine velocity:
+  fullArray.forEach(function(c) {
+    if (c.x == closest.x && c.y == closest.y) {
+      // console.log(c);
+      var angle = c.val * 2 * Math.PI;
+      // console.log(angle);
+      xDis = Math.cos(angle);
+      yDis = Math.sin(angle);
+      // console.log(xDis, yDis);
+    }
+  });
+
+  // var vel = getVelocity(closest);
+  // console.log(vel);
+
+  Body.setVelocity(ball, { x: 7*xDis, y: 7*yDis });
+
+  for (var i=0; i < allBalls.length; i++) {
+    var newBall = allBalls[i];
+    ellipse(newBall.position.x, newBall.position.y, 10);
+    Body.setVelocity(newBall, { x: (w/2 - newBall.position.x) / w, y: (w/2 - newBall.position.y) / w});
+  }
+}
+
+
+// Not sure why this isn't working...:
+function getVelocity(pt) {
+  console.log(pt);
+  var xDis, yDis;
+  var vel;
+  // get the Perlin value of the closest grid point to determine velocity:
+  fullArray.forEach(function(c) {
+    if (c.x == pt.x && c.y == pt.y) {
+      // console.log(c);
+      var angle = c.val * 2 * Math.PI;
+      // console.log(angle);
+      xDis = Math.cos(angle);
+      yDis = Math.sin(angle);
+      console.log(xDis, yDis);
+      vel = {x: xDis, y: yDis};
+      console.log(vel);
+
+    }
+  });
+  return vel;
+}
+
+
+// Helper functions:
+function distance(a, b) {
+  return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
+}
+
+function findClosest(x, y) {
+  var closest;
+  var altPosX = x / s;
+  var altPosY = y / s;
   var one = Math.floor(altPosX);
   var two = Math.floor(altPosY);
   var three = Math.ceil(altPosX);
@@ -64,10 +123,10 @@ function draw() {
   var realThree = s * three;
   var realFour = s * four;
 
-  var dist1 = distance({x: ball.position.x, y: ball.position.y}, {x: realOne, y: realTwo});
-  var dist2 = distance({x: ball.position.x, y: ball.position.y}, {x: realOne, y: realFour});
-  var dist3 = distance({x: ball.position.x, y: ball.position.y}, {x: realThree, y: realTwo});
-  var dist4 = distance({x: ball.position.x, y: ball.position.y}, {x: realThree, y: realFour});
+  var dist1 = distance({x: x, y: y}, {x: realOne, y: realTwo});
+  var dist2 = distance({x: x, y: y}, {x: realOne, y: realFour});
+  var dist3 = distance({x: x, y: y}, {x: realThree, y: realTwo});
+  var dist4 = distance({x: x, y: y}, {x: realThree, y: realFour});
 
   var min = Math.min(dist1, dist2, dist3, dist4);
 
@@ -81,41 +140,11 @@ function draw() {
     closest = {x: realThree, y: realFour};
   }
 
-  console.log(closest);
-
-  var xDis, yDis;
-  // get the Perlin value of the closest grid point to determine velocity:
-  fullArray.forEach(function(c) {
-    if (c.x == closest.x && c.y == closest.y) {
-      // console.log(c);
-      var angle = c.val * 2 * Math.PI;
-      // console.log(angle);
-      xDis = Math.cos(angle);
-      yDis = Math.sin(angle);
-      console.log(xDis, yDis);
-    }
-  });
-
-
-  Body.setVelocity(ball, { x: 10* xDis, y: 10* yDis });
-
-  for (var i=0; i < allBalls.length; i++) {
-    var newBall = allBalls[i];
-    ellipse(newBall.position.x, newBall.position.y, 10);
-    Body.setVelocity(newBall, { x: (w/2 - newBall.position.x) / w, y: (w/2 - newBall.position.y) / w});
-  }
-}
-
-
-
-
-// Helper functions:
-function distance(a, b) {
-  return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
+  return closest;
 }
 
 // can be mouseClicked or mouseDragged:
-function mouseDragged() {
+function mouseClicked() {
   var ball = Bodies.circle(mouseX, mouseY, 5, {isStatic: false});
   World.add(world, ball);
   allBalls.push(ball);
