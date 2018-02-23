@@ -54,6 +54,16 @@ function draw() {
   // Lot of work to get the closest grid-point...but whatev:
   var closest = findClosest(ball.position.x, ball.position.y);
 
+  // console.log(w - s);
+  if (closest.x == 0) {
+    Body.setPosition(ball, {x: w - 1.5 * s, y: ball.position.y});
+  } else if (closest.x == w - s) {
+    Body.setPosition(ball, {x: 1.5 * s, y: ball.position.y});
+  } else if (closest.y == 0) {
+    Body.setPosition(ball, {x: ball.position.x, y: w - 1.5 * s});
+  } else if (closest.y == w - s) {
+    Body.setPosition(ball, {x: ball.position.x, y: 1.5 * s});
+  }
   // console.log(closest);
 
   var xDis, yDis;
