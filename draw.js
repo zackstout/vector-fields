@@ -3,6 +3,7 @@
 var gridPoints = [];
 var s = 20;
 var w;
+var fullArray = [];
 
 var Engine = Matter.Engine;
 var World = Matter.World;
@@ -30,21 +31,18 @@ function setup () {
   Engine.run(engine);
   w = width;
   makeGrid();
-  drawVectors();
+  // drawVectors();
 
   console.log(gridPoints);
-}
-
-function distance(a, b) {
-  return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
 }
 
 // Draw:
 function draw() {
   background(100);
   drawVectors();
+  // console.log(fullArray);
 
-  noLoop();
+  // noLoop();
 
   ellipse(ball.position.x, ball.position.y, 10);
   // remember, we're just hard coding the fidelity to the vector field here -- should bind them with a global rule:
@@ -85,8 +83,21 @@ function draw() {
 
   console.log(closest);
 
+  var xDis, yDis;
+  // get the Perlin value of the closest grid point to determine velocity:
+  fullArray.forEach(function(c) {
+    if (c.x == closest.x && c.y == closest.y) {
+      // console.log(c);
+      var angle = c.val * 2 * Math.PI;
+      // console.log(angle);
+      xDis = Math.cos(angle);
+      yDis = Math.sin(angle);
+      console.log(xDis, yDis);
+    }
+  });
 
-  Body.setVelocity(ball, { x: (w/2 - ball.position.x) / w, y: (w/2 - ball.position.y) / w});
+
+  Body.setVelocity(ball, { x: 10* xDis, y: 10* yDis });
 
   for (var i=0; i < allBalls.length; i++) {
     var newBall = allBalls[i];
@@ -95,7 +106,14 @@ function draw() {
   }
 }
 
+
+
+
 // Helper functions:
+function distance(a, b) {
+  return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
+}
+
 // can be mouseClicked or mouseDragged:
 function mouseDragged() {
   var ball = Bodies.circle(mouseX, mouseY, 5, {isStatic: false});
@@ -115,6 +133,13 @@ function drawVectors() {
     var scale = 0.1;
 
     var noiseVal = noise(scale * pt.x/s, scale * pt.y/s);
+
+    fullArray.push({
+      x: pt.x,
+      y: pt.y,
+      val: noiseVal
+    });
+
     var angle = noiseVal * 2 * Math.PI;
     rotate(angle);
 
