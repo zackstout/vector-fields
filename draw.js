@@ -9,15 +9,13 @@ var World = Matter.World;
 var Bodies = Matter.Bodies;
 var Body = Matter.Body;
 
-var ball = Bodies.circle(320, 350, 5, {isStatic: false});
+var ball = Bodies.circle(325, 350, 5, {isStatic: false});
 var allBalls = [];
 
 var world;
 
 var xOff = -0.02;
 var yOff = 0.05;
-// var xOffPrev = xOff;
-// var yOffPrev = yOff;
 
 // Setup:
 function setup () {
@@ -37,6 +35,10 @@ function setup () {
   console.log(gridPoints);
 }
 
+function distance(a, b) {
+  return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
+}
+
 // Draw:
 function draw() {
   background(100);
@@ -46,6 +48,44 @@ function draw() {
 
   ellipse(ball.position.x, ball.position.y, 10);
   // remember, we're just hard coding the fidelity to the vector field here -- should bind them with a global rule:
+  // And that's easier said than done -- do we add a Perlin-noised value to each pixel in the canvas? How else to smoothly determine velocity?
+  // Another option would be to check which of four points is closest to a given ball, and dictate its velocity that way.
+
+  // Say ball is at (25, 35): need to check (20, 20), (20, 40), (40, 20), and (40, 40).
+  // Lot of work to get the closest grid-point...but whatev:
+  var closest;
+
+  var altPosX = ball.position.x / s;
+  var altPosY = ball.position.y / s;
+  var one = Math.floor(altPosX);
+  var two = Math.floor(altPosY);
+  var three = Math.ceil(altPosX);
+  var four = Math.ceil(altPosY);
+  var realOne = s * one;
+  var realTwo = s * two;
+  var realThree = s * three;
+  var realFour = s * four;
+
+  var dist1 = distance({x: ball.position.x, y: ball.position.y}, {x: realOne, y: realTwo});
+  var dist2 = distance({x: ball.position.x, y: ball.position.y}, {x: realOne, y: realFour});
+  var dist3 = distance({x: ball.position.x, y: ball.position.y}, {x: realThree, y: realTwo});
+  var dist4 = distance({x: ball.position.x, y: ball.position.y}, {x: realThree, y: realFour});
+
+  var min = Math.min(dist1, dist2, dist3, dist4);
+
+  if (min == dist1) {
+    closest = {x: realOne, y: realTwo};
+  } else if (min == dist2) {
+    closest = {x: realOne, y: realFour};
+  } else if (min == dist3) {
+    closest = {x: realThree, y: realTwo};
+  } else if (min == dist4) {
+    closest = {x: realThree, y: realFour};
+  }
+
+  console.log(closest);
+
+
   Body.setVelocity(ball, { x: (w/2 - ball.position.x) / w, y: (w/2 - ball.position.y) / w});
 
   for (var i=0; i < allBalls.length; i++) {
@@ -71,32 +111,15 @@ function drawVectors() {
     // var xDis = 20 * ((w/2) - pt.x) / w;
     // var yDis = 20 * ((w/2) - pt.y) / w;
 
-    // --Failed attempt:--
-    // to keep continuity going downward as well as across:
-    // if (index % (w/s) == 0) {
-    //   xOff = xOffPrev;
-    //   yOff = yOffPrev;
-    // }
-    // xOff += 0.15;
-    // yOff += 0.15;
-    // var nx = noise(xOff);
-    // var ny = noise(yOff);
-    // var xDis = 30 * nx;
-    // var yDis = 30 * ny;
-    //
-    // xOffPrev = nx;
-    // yOffPrev = ny;
+    // Perfect, this makes it look more continuous and natural:
+    var scale = 0.1;
 
-    var noiseVal = noise(xOff + pt.x/s, yOff + pt.y/s);
-    // console.log(noiseVal);
-
+    var noiseVal = noise(scale * pt.x/s, scale * pt.y/s);
     var angle = noiseVal * 2 * Math.PI;
-
     rotate(angle);
 
-
     stroke(255);
-    line(0, 0, 5, 0);
+    line(0, 0, 10, 0);
 
     rotate(-angle);
 
