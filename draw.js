@@ -90,9 +90,20 @@ function draw() {
     var newBall = allBalls[i];
     ellipse(newBall.position.x, newBall.position.y, 10);
     var xDis2, yDis2;
-    // get the Perlin value of the closest grid point to determine velocity:
 
     var closest2 = findClosest(newBall.position.x, newBall.position.y);
+
+    if (closest2.x == 0) {
+      Body.setPosition(newBall, {x: w - 1.5 * s, y: newBall.position.y});
+    } else if (closest2.x == w - s) {
+      Body.setPosition(newBall, {x: 1.5 * s, y: newBall.position.y});
+    } else if (closest2.y == 0) {
+      Body.setPosition(newBall, {x: newBall.position.x, y: w - 1.5 * s});
+    } else if (closest2.y == w - s) {
+      Body.setPosition(newBall, {x: newBall.position.x, y: 1.5 * s});
+    }
+
+    // get the Perlin value of the closest grid point to determine velocity:
     fullArray.forEach(function(c) {
       if (c.x == closest2.x && c.y == closest2.y) {
         // console.log(c);
@@ -105,7 +116,7 @@ function draw() {
       }
     });
 
-    Body.setVelocity(newBall, { x: 7 * xDis2, y: 7 * yDis2 });
+    Body.setVelocity(newBall, { x: 4 * xDis2, y: 4 * yDis2 });
   }
 }
 
@@ -207,7 +218,7 @@ function drawVectors() {
     rotate(-angle);
 
     // line(0, 0, xDis, yDis);
-    // don't forget to translate back out -- could likely also use push and pop to achieve same effect:
+    // don't forget to translate back out -- could also use push and pop to achieve same effect:
     translate(-pt.x, -pt.y);
   });
 }
