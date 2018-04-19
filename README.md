@@ -1,6 +1,8 @@
 # Vector Field with Perlin Noise
 Building a vector field that objects in the world will obey. Using Perlin noise to determine the direction of each vector. Hopefully I will scale it up to 3 dimensions, ultimately modeling snowfall under lamplight.
 
+This was a great exercise. The main challenges were figuring out how to use p5's `noise` method and implementing the physics to make the balls obey the vector field.
+
 ## Built With:
 - p5.js
 - Matter.js
